@@ -10,6 +10,8 @@ use App\Repository\LivreRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
@@ -33,6 +35,26 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      properties={
  *          "prix"
  *      }
+ *)
+  * @ApiFilter(
+ *     OrderFilter::class,
+ *      properties={
+ *          "titre",
+ *          "prix",
+ *          "auteur.nom",
+ *      }
+ *)
+ * @ApiFilter(
+ *     PropertyFilter::class,
+ *     arguments={
+ *         "parameterName": "properties",
+ *         "overrideDefaultProperties": false,
+ *         "whitelist": {
+ *             "isbn",
+ *             "titre",
+ *             "prix"
+ *         }
+ *     }
  *)
 */
 class Livre
