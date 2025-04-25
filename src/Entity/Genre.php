@@ -16,19 +16,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=GenreRepository::class)
  * @ApiResource(
- *     itemOperations={
- *         "get_simple"={
- *             "method"="GET",
- *             "path"="/genres/{id}/simple",
- *             "normalization_context"={"groups"={"listGenreSimple"}}
- *         },
- *         "get_full"={
- *             "method"="GET",
- *             "path"="/genres/{id}/full",
- *             "normalization_context"={"groups"={"listGenreFull"}}
- *         }
- *     },
- *     collectionOperations={"get"}
+ *     attributes={
+ *         "order"={"libelle": "ASC"}
+ *     }
  * )
  * @UniqueEntity(
  *     fields={"libelle"},
@@ -41,13 +31,11 @@ class Genre
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"listGenreSimple", "listGenreFull"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"listGenreSimple", "listGenreFull"})
      * @Assert\Length(
      *     min=2,
      *     max=50,
@@ -60,7 +48,6 @@ class Genre
     /**
      * @ORM\OneToMany(targetEntity=Livre::class, mappedBy="genre")
      * @ApiSubresource()
-     * @Groups({"listGenreFull"})
      */
     private $livres;
 

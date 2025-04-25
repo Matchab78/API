@@ -13,7 +13,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
 * @ORM\Entity(repositoryClass=LivreRepository::class)
-* @ApiResource() 
+*  * @ApiResource(
+ *     attributes={
+ *         "order"={"titre": "ASC", "prix": "DESC"},
+ *     }
+ * )
 */
 class Livre
 {
@@ -21,57 +25,48 @@ class Livre
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"listAuteurFull"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"listGenreFull", "listAuteurFull"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"listGenreFull", "listAuteurFull"})
      */
     private $prix;
 
     /**
      * @ORM\ManyToOne(targetEntity=Genre::class, inversedBy="editeur")
-     * @Groups({"listAuteurFull"})
      */
     private $genre;
 
     /**
      * @ORM\ManyToOne(targetEntity=Editeur::class, inversedBy="livres")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"listGenreFull", "listAuteurFull"})
      */
     private $editeur;
 
     /**
      * @ORM\ManyToOne(targetEntity=Auteur::class, inversedBy="livres")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"listGenreFull"})
      */
     private $auteur;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"listGenreFull", "listAuteurFull"})
      */
     private $isbn;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"listGenreFull", "listAuteurFull"})
      */
     private $annee;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"listGenreFull", "listAuteurFull"})
      */
     private $langue;
 
