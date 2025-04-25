@@ -15,10 +15,25 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=GenreRepository::class)
- * @ApiResource()
+ * @ApiResource(
+ *     itemOperations={
+ *         "get_simple"={
+ *             "method"="GET",
+ *             "path"="/genres/{id}/simple",
+ *             "normalization_context"={"groups"={"listGenreSimple"}}
+ *         },
+ *         "get_full"={
+ *             "method"="GET",
+ *             "path"="/genres/{id}/full",
+ *             "normalization_context"={"groups"={"listGenreFull"}}
+ *         }
+ *     },
+ *     collectionOperations={"get"}
+ * )
  * @UniqueEntity(
- *    fields={"libelle"},
- *    message="Ce genre existe déjà")
+ *     fields={"libelle"},
+ *     message="Ce genre existe déjà"
+ * )
  */
 class Genre
 {
@@ -26,18 +41,18 @@ class Genre
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"listGenreSimple","listGenreFull"})
+     * @Groups({"listGenreSimple", "listGenreFull"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * * @Groups({"listGenreSimple","listGenreFull"})
+     * @Groups({"listGenreSimple", "listGenreFull"})
      * @Assert\Length(
      *     min=2,
      *     max=50,
-     *     minMessage="Le libelle doit faire au moins {{ limit }} caractères",
-     *     maxMessage ="Le libelle doit faire au plus {{ limit }} caractères"
+     *     minMessage="Le libellé doit faire au moins {{ limit }} caractères",
+     *     maxMessage="Le libellé doit faire au plus {{ limit }} caractères"
      * )
      */
     private $libelle;
@@ -74,30 +89,31 @@ class Genre
     /**
      * @return Collection<int, Livre>
      */
-    public function getlivres(): Collection
+    public function getLivres(): Collection
     {
         return $this->livres;
     }
 
-    public function addlivres(Livre $livres): self
+    public function addLivre(Livre $livre): self
     {
-        if (!$this->livres->contains($livres)) {
-            $this->livres[] = $livres;
-            $livres->setGenre($this);
+        if (!$this->livres->contains($livre)) {
+            $this->livres[] = $livre;
+            $livre->setGenre($this);
         }
 
         return $this;
     }
 
-    public function removelivres(Livre $livres): self
+    public function removeLivre(Livre $livre): self
     {
-        if ($this->livres->removeElement($livres)) {
+        if ($this->livres->removeElement($livre)) {
             // set the owning side to null (unless already changed)
-            if ($livres->getGenre() === $this) {
-                $livres->setGenre(null);
+            if ($livre->getGenre() === $this) {
+                $livre->setGenre(null);
             }
         }
 
         return $this;
     }
 }
+
