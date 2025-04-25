@@ -43,11 +43,11 @@ class Genre
      * @ORM\OneToMany(targetEntity=Livre::class, mappedBy="genre")
      * @Groups({"listGenreFull"})
      */
-    private $editeur;
+    private $livres;
 
     public function __construct()
     {
-        $this->editeur = new ArrayCollection();
+        $this->livres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -70,27 +70,27 @@ class Genre
     /**
      * @return Collection<int, Livre>
      */
-    public function getEditeur(): Collection
+    public function getlivres(): Collection
     {
-        return $this->editeur;
+        return $this->livres;
     }
 
-    public function addEditeur(Livre $editeur): self
+    public function addlivres(Livre $livres): self
     {
-        if (!$this->editeur->contains($editeur)) {
-            $this->editeur[] = $editeur;
-            $editeur->setGenre($this);
+        if (!$this->livres->contains($livres)) {
+            $this->livres[] = $livres;
+            $livres->setGenre($this);
         }
 
         return $this;
     }
 
-    public function removeEditeur(Livre $editeur): self
+    public function removelivres(Livre $livres): self
     {
-        if ($this->editeur->removeElement($editeur)) {
+        if ($this->livres->removeElement($livres)) {
             // set the owning side to null (unless already changed)
-            if ($editeur->getGenre() === $this) {
-                $editeur->setGenre(null);
+            if ($livres->getGenre() === $this) {
+                $livres->setGenre(null);
             }
         }
 
