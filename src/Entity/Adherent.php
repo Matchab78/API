@@ -2,19 +2,28 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AdherentRepository;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=AdherentRepository::class)
  * @ApiResource()
-
+ * @UniqueEntity(
+ *    fields={"mail"},
+ *    message="Ce mail existe déjà")
  */
-class Adherent
+class Adherent implements UserInterface
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_MANAGER = 'ROLE_MANAGER';
+    const ROLE_ADHERENT = 'ROLE_ADHERENT';
+    const DEFAULT_ROLE = 'ROLE_ADHERENT';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -58,6 +67,11 @@ class Adherent
     private $password;
 
     /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $roles;
+
+    /**
      * @ORM\OneToMany(targetEntity=Pret::class, mappedBy="Adherent")
      */
     private $prets;
@@ -65,6 +79,7 @@ class Adherent
     public function __construct()
     {
         $this->prets = new ArrayCollection();
+        $this->roles = [self::DEFAULT_ROLE];
     }
 
     public function getId(): ?int
@@ -184,5 +199,35 @@ class Adherent
         }
 
         return $this;
+    }           //affectes les roles de l'utilisateur
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // Garantir que chaque utilisateur a au moins le rôle par défaut
+        $roles[] = self::DEFAULT_ROLE;
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->getMail();
+    }
+
+    public function eraseCredentials()
+    {
+        // Cette méthode peut rester vide
     }
 }
