@@ -15,10 +15,15 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=GenreRepository::class)
- * @ApiResource()
+ * @ApiResource(
+ *     attributes={
+ *         "order"={"libelle": "ASC"}
+ *     }
+ * )
  * @UniqueEntity(
- *    fields={"libelle"},
- *    message="Ce genre existe déjà")
+ *     fields={"libelle"},
+ *     message="Ce genre existe déjà"
+ * )
  */
 class Genre
 {
@@ -26,18 +31,16 @@ class Genre
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"listGenreSimple","listGenreFull"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * * @Groups({"listGenreSimple","listGenreFull"})
      * @Assert\Length(
      *     min=2,
      *     max=50,
-     *     minMessage="Le libelle doit faire au moins {{ limit }} caractères",
-     *     maxMessage ="Le libelle doit faire au plus {{ limit }} caractères"
+     *     minMessage="Le libellé doit faire au moins {{ limit }} caractères",
+     *     maxMessage="Le libellé doit faire au plus {{ limit }} caractères"
      * )
      */
     private $libelle;
@@ -45,7 +48,6 @@ class Genre
     /**
      * @ORM\OneToMany(targetEntity=Livre::class, mappedBy="genre")
      * @ApiSubresource()
-     * @Groups({"listGenreFull"})
      */
     private $livres;
 
@@ -74,30 +76,31 @@ class Genre
     /**
      * @return Collection<int, Livre>
      */
-    public function getlivres(): Collection
+    public function getLivres(): Collection
     {
         return $this->livres;
     }
 
-    public function addlivres(Livre $livres): self
+    public function addLivre(Livre $livre): self
     {
-        if (!$this->livres->contains($livres)) {
-            $this->livres[] = $livres;
-            $livres->setGenre($this);
+        if (!$this->livres->contains($livre)) {
+            $this->livres[] = $livre;
+            $livre->setGenre($this);
         }
 
         return $this;
     }
 
-    public function removelivres(Livre $livres): self
+    public function removeLivre(Livre $livre): self
     {
-        if ($this->livres->removeElement($livres)) {
+        if ($this->livres->removeElement($livre)) {
             // set the owning side to null (unless already changed)
-            if ($livres->getGenre() === $this) {
-                $livres->setGenre(null);
+            if ($livre->getGenre() === $this) {
+                $livre->setGenre(null);
             }
         }
 
         return $this;
     }
 }
+
